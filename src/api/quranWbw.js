@@ -56,7 +56,7 @@ export async function getAyahAudio(reciterId, surahNumber, numberInSurah) {
       const file = data.audio_files?.[0]
       if (!file) throw new Error('No audio available for this ayah')
       return {
-        url: file.url.startsWith('http') ? file.url : `${AUDIO_CDN}${file.url}`,
+        url: /^(https?:)?\/\//.test(file.url) ? file.url : `${AUDIO_CDN}${file.url}`,
         segments: file.segments || [],
       }
     }

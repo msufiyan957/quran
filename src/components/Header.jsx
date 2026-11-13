@@ -6,7 +6,7 @@ export default function Header() {
       <div className="app-header__inner">
         <Link to="/" className="brand">
           <span className="brand__mark" aria-hidden="true">ق</span>
-          QuranPeace
+          Assalamualaikum
         </Link>
       </div>
     </header>

@@ -1045,22 +1045,28 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--text-dim);
+  opacity: 0.8;
   margin: 0 0 24px;
 }
 
 .footer-credit__logo-link {
   display: inline-flex;
   align-items: center;
-  opacity: 0.85;
+  opacity: 0.55;
+  filter: grayscale(1);
   transition: opacity 0.15s ease;
 }
 
 .footer-credit__logo-link:hover {
-  opacity: 1;
+  opacity: 0.85;
 }
 
 .footer-credit__logo {
-  height: 14px;
+  height: 12px;
   width: auto;
   display: none;
 }

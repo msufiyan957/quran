@@ -123,9 +123,10 @@ export default function Home() {
           <span />
         </div>
         <p className="dedication">
-          Built with the hope that it serves you well — and that it counts for good, in sha Allah.
+          Built in service of a mission of charity, Quran, and community — with the hope that it serves you well, and that it counts for good, in sha Allah.
         </p>
         <p className="footer-credit">
+          <span>crafted by</span>
           <a
             href="https://deccanbridge.com"
             target="_blank"
