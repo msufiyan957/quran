@@ -5,8 +5,7 @@ export default function Header() {
     <header className="app-header">
       <div className="app-header__inner">
         <Link to="/" className="brand">
-          <span className="brand__mark" aria-hidden="true">ق</span>
-          Assalamualaikum
+          Assalamualaikum<span className="brand__tld">.org</span>
         </Link>
       </div>
     </header>

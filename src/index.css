@@ -129,25 +129,17 @@ button {
 
 .brand {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: baseline;
   text-decoration: none;
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--text);
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: -0.01em;
+  color: var(--accent);
 }
 
-.brand__mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--accent);
-  color: var(--accent-contrast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Noto Naskh Arabic', serif;
-  font-size: 1.1rem;
+.brand__tld {
+  font-weight: 600;
+  color: var(--text-dim);
 }
 
 /* ---------- Bottom nav (icon + label, big tap targets) ---------- */
@@ -574,8 +566,7 @@ button {
   align-items: center;
   gap: 6px;
   min-width: 0;
-  font-size: 0.8rem;
-  color: var(--text-dim);
+  margin-top: 1px;
 }
 
 .surah-card__meta-text {
@@ -583,18 +574,35 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.surah-card__ayahs {
+  flex-shrink: 0;
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.surah-card__ayahs::before {
+  content: '· ';
 }
 
 .surah-card__tag {
+  display: inline-flex;
+  align-items: center;
   flex-shrink: 0;
+  line-height: 1;
+  white-space: nowrap;
   font-size: 0.68rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   color: var(--accent);
   background: rgba(var(--accent-rgb), 0.12);
   border-radius: 999px;
-  padding: 1px 7px;
+  padding: 4px 8px;
 }
 
 .surah-card__name-ar {
@@ -642,6 +650,32 @@ button {
   .surah-card .icon-btn--primary {
     width: 42px;
     height: 42px;
+  }
+
+  .surah-card__meta {
+    display: block;
+  }
+
+  .surah-card__meta-text {
+    display: block;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .surah-card__ayahs {
+    display: block;
+    margin-top: 1px;
+  }
+
+  .surah-card__ayahs::before {
+    content: '';
+  }
+
+  .surah-card__tag {
+    margin-top: 4px;
+    font-size: 0.64rem;
+    padding: 3px 7px;
   }
 }
 

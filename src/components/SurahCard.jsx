@@ -23,9 +23,8 @@ export default function SurahCard({ surah }) {
         <span className="surah-card__text">
           <span className="surah-card__name-en">{surah.englishName}</span>
           <span className="surah-card__meta">
-            <span className="surah-card__meta-text">
-              {surah.englishNameTranslation} · {surah.numberOfAyahs} ayahs
-            </span>
+            <span className="surah-card__meta-text">{surah.englishNameTranslation}</span>
+            <span className="surah-card__ayahs">{surah.numberOfAyahs} ayahs</span>
             <span className="surah-card__tag">{surah.revelationType}</span>
           </span>
         </span>
