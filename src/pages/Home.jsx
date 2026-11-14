@@ -111,7 +111,7 @@ export default function Home() {
           <span />
         </div>
         <p className="dedication">
-          Built in service of a mission of charity, Quran, and community — with the hope that it serves you well, and that it counts for good, in sha Allah.
+          Built with the hope that it serves you well — and that it counts for good, in sha Allah.
         </p>
       </div>
     </div>
