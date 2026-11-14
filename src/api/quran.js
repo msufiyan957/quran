@@ -21,6 +21,7 @@ export const RECITERS = [
   { id: 'ar.husary', name: 'Mahmoud Khalil Al-Husary' },
   { id: 'ar.abdulbasitmurattal', name: 'Abdul Basit (Murattal)' },
   { id: 'ar.minshawi', name: 'Mohamed Siddiq Al-Minshawi' },
+  { id: 'ar.yasseraldossari', name: 'Yasser Al-Dosari' },
 ]
 
 export const TRANSLATIONS = [

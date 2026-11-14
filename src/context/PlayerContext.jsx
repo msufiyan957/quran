@@ -6,11 +6,27 @@ import { useBookmarks } from './BookmarksContext.jsx'
 
 const PlayerContext = createContext(null)
 
+// Seeks to `ms` once the audio element's duration is known. Some reciters
+// share one audio file across a whole surah, so playing a single ayah means
+// seeking into it rather than loading a fresh clip.
+function seekTo(audio, ms) {
+  const seconds = ms / 1000
+  if (!Number.isNaN(audio.duration)) {
+    audio.currentTime = seconds
+  } else {
+    audio.addEventListener('loadedmetadata', () => { audio.currentTime = seconds }, { once: true })
+  }
+}
+
 export function PlayerProvider({ children }) {
   const { settings } = useSettings()
   const { recordLastRead } = useBookmarks()
   const audioRef = useRef(null)
   const segmentsRef = useRef([])
+  // Where the current ayah starts/ends within audio.src — both 0/null for a
+  // reciter with one file per ayah, real offsets for a shared whole-surah file.
+  const ayahBoundsRef = useRef({ startMs: 0, endMs: null })
+  const endTriggeredRef = useRef(false)
   const [surah, setSurah] = useState(null)
   const [index, setIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -23,11 +39,17 @@ export function PlayerProvider({ children }) {
     const audio = new Audio()
     audio.preload = 'auto'
     audio.ontimeupdate = () => {
-      const segments = segmentsRef.current
-      if (!segments.length) return
       const t = audio.currentTime * 1000
-      const seg = segments.find(([, , start, end]) => t >= start && t < end)
-      setActiveWordPosition(seg ? seg[1] : null)
+      const segments = segmentsRef.current
+      if (segments.length) {
+        const seg = segments.find(([, , start, end]) => t >= start && t < end)
+        setActiveWordPosition(seg ? seg[1] : null)
+      }
+      const { endMs } = ayahBoundsRef.current
+      if (endMs != null && !endTriggeredRef.current && t >= endMs) {
+        endTriggeredRef.current = true
+        audio.onended?.()
+      }
     }
     audioRef.current = audio
     return () => audio.pause()
@@ -49,8 +71,11 @@ export function PlayerProvider({ children }) {
       setIndex(idx)
       setActiveWordPosition(null)
       segmentsRef.current = audioData.segments
+      ayahBoundsRef.current = { startMs: audioData.startMs ?? 0, endMs: audioData.endMs ?? null }
+      endTriggeredRef.current = false
       const audio = audioRef.current
-      audio.src = audioData.url
+      if (audio.src !== audioData.url) audio.src = audioData.url
+      seekTo(audio, audioData.startMs ?? 0)
       await audio.play()
       setIsPlaying(true)
       recordLastRead({
@@ -113,10 +138,13 @@ export function PlayerProvider({ children }) {
         if (cancelled) return
         setSurah(s)
         segmentsRef.current = audioData.segments
+        ayahBoundsRef.current = { startMs: audioData.startMs ?? 0, endMs: audioData.endMs ?? null }
+        endTriggeredRef.current = false
         setActiveWordPosition(null)
         const audio = audioRef.current
         if (audio) {
-          audio.src = audioData.url
+          if (audio.src !== audioData.url) audio.src = audioData.url
+          seekTo(audio, audioData.startMs ?? 0)
           if (wasPlaying) audio.play()
         }
       } catch (e) {
@@ -135,7 +163,8 @@ export function PlayerProvider({ children }) {
     if (!audio) return
     audio.onended = () => {
       if (loopAyah) {
-        audio.currentTime = 0
+        endTriggeredRef.current = false
+        seekTo(audio, ayahBoundsRef.current.startMs)
         audio.play()
       } else {
         goToNext()
