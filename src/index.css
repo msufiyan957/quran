@@ -512,12 +512,6 @@ button {
   margin: 0 auto;
 }
 
-@media (max-width: 560px) {
-  .surah-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .surah-card {
   display: flex;
   align-items: center;
@@ -611,6 +605,44 @@ button {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .surah-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .surah-card {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .surah-card__link {
+    gap: 10px;
+  }
+
+  .surah-card__number {
+    width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
+  }
+
+  .surah-card__name-en {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    font-size: 0.95rem;
+  }
+
+  .surah-card__name-ar {
+    max-width: 30%;
+    font-size: 1.15rem;
+  }
+
+  .surah-card .icon-btn--primary {
+    width: 42px;
+    height: 42px;
+  }
 }
 
 .section-heading {
