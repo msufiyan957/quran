@@ -6,13 +6,6 @@ import SurahCard from '../components/SurahCard.jsx'
 import { SearchIcon, BookIcon, ChevronRightIcon } from '../components/Icons.jsx'
 import { getHadithOfTheDay } from '../data/hadiths.js'
 
-function getGreeting() {
-  const hour = new Date().getHours()
-  if (hour < 12) return 'Good morning'
-  if (hour < 18) return 'Good afternoon'
-  return 'Good evening'
-}
-
 export default function Home() {
   const [surahs, setSurahs] = useState(null)
   const [error, setError] = useState(null)
@@ -42,9 +35,6 @@ export default function Home() {
     <div className="page">
       <div className="container">
         <section className="home-hero">
-          <p className="home-hero__eyebrow">
-            {getGreeting()} <span className="arabic">السلام عليكم</span>
-          </p>
           <h1 className="home-hero__title">The Noble Qur'an</h1>
           <p className="home-hero__subtitle">Read, listen, and reflect — in Arabic and your language.</p>
 

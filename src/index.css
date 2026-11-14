@@ -303,22 +303,6 @@ button {
   pointer-events: none;
 }
 
-.home-hero__eyebrow {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--accent);
-  font-size: 0.85rem;
-  font-weight: 700;
-  margin: 0 0 8px;
-}
-
-.home-hero__eyebrow .arabic {
-  font-size: 1.05rem;
-  font-weight: 400;
-}
-
 .home-hero__title {
   position: relative;
   font-size: 1.8rem;
