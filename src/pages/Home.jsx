@@ -36,7 +36,7 @@ export default function Home() {
       <div className="container">
         <section className="home-hero">
           <h1 className="home-hero__title">The Noble Qur'an</h1>
-          <p className="home-hero__subtitle">Read, listen, and reflect — in Arabic and your language.</p>
+          <p className="home-hero__subtitle">Read, listen, and reflect.</p>
 
           <div className="hadith-of-day">
             <span className="hadith-of-day__label">Hadith of the Day</span>
