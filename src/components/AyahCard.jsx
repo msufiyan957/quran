@@ -30,41 +30,43 @@ const AyahCard = forwardRef(function AyahCard(
       aria-label={`Ayah ${ayah.numberInSurah}`}
     >
       <div className="quran-row__meaning">
-        <div className="quran-row__controls">
+        <div className="quran-row__topline">
           <span className="ayah-badge">{ayah.numberInSurah}</span>
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={() => onBookmark(ayah)}
-            aria-pressed={bookmarked}
-            aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
-          >
-            <BookmarkIcon filled={bookmarked} />
-          </button>
-          <button
-            type="button"
-            className="icon-btn icon-btn--primary"
-            onClick={() => (isActive ? onToggle() : onPlay(surahNumber, ayah.numberInSurah - 1))}
-            aria-label={isActive && isPlaying ? 'Pause' : `Play ayah ${ayah.numberInSurah}`}
-          >
-            {isActive && isLoading ? (
-              <span className="spinner" aria-hidden="true" />
-            ) : isActive && isPlaying ? (
-              <PauseIcon />
-            ) : (
-              <PlayIcon />
-            )}
-          </button>
-          <button
-            type="button"
-            className={`icon-btn${looping ? ' icon-btn--active' : ''}`}
-            onClick={onToggleLoop}
-            aria-pressed={looping}
-            aria-label={looping ? 'Stop repeating this ayah' : `Repeat ayah ${ayah.numberInSurah} to memorize`}
-            title="Repeat this ayah"
-          >
-            <LoopIcon />
-          </button>
+          <div className="quran-row__controls">
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={() => onBookmark(ayah)}
+              aria-pressed={bookmarked}
+              aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
+            >
+              <BookmarkIcon filled={bookmarked} />
+            </button>
+            <button
+              type="button"
+              className="icon-btn icon-btn--primary"
+              onClick={() => (isActive ? onToggle() : onPlay(surahNumber, ayah.numberInSurah - 1))}
+              aria-label={isActive && isPlaying ? 'Pause' : `Play ayah ${ayah.numberInSurah}`}
+            >
+              {isActive && isLoading ? (
+                <span className="spinner" aria-hidden="true" />
+              ) : isActive && isPlaying ? (
+                <PauseIcon />
+              ) : (
+                <PlayIcon />
+              )}
+            </button>
+            <button
+              type="button"
+              className={`icon-btn${looping ? ' icon-btn--active' : ''}`}
+              onClick={onToggleLoop}
+              aria-pressed={looping}
+              aria-label={looping ? 'Stop repeating this ayah' : `Repeat ayah ${ayah.numberInSurah} to memorize`}
+              title="Repeat this ayah"
+            >
+              <LoopIcon />
+            </button>
+          </div>
         </div>
         {showTranslation && <p className="quran-row__translation">{ayah.translation}</p>}
       </div>

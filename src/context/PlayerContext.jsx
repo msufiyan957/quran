@@ -35,6 +35,15 @@ export function PlayerProvider({ children }) {
   const [activeWordPosition, setActiveWordPosition] = useState(null)
   const [loopAyah, setLoopAyah] = useState(false)
 
+  // Always-current snapshot for the "ended" handler to read, so it never
+  // acts on a stale surah/index/loopAyah captured when it was last bound.
+  const latestRef = useRef({})
+  latestRef.current = { surah, index, loopAyah, continuousPlay: settings.continuousPlay }
+  // The "ended" handler is bound once (see mount effect below) and must
+  // never call the playAt closure from that first render directly — it
+  // would freeze settings.reciter/translation at their mount-time values.
+  const playAtRef = useRef(null)
+
   useEffect(() => {
     const audio = new Audio()
     audio.preload = 'auto'
@@ -64,8 +73,29 @@ export function PlayerProvider({ children }) {
         audio.onended?.()
       }
     }
+    // Bound once, for the lifetime of this audio element — reads latestRef
+    // instead of closing over surah/index/loopAyah, so it's immune to any
+    // timing gap between a state update and this handler being rebound.
+    audio.onended = () => {
+      const { loopAyah, surah, index, continuousPlay } = latestRef.current
+      if (loopAyah) {
+        endTriggeredRef.current = false
+        seekTo(audio, ayahBoundsRef.current.startMs)
+        audio.play()
+        return
+      }
+      if (!surah) return
+      if (index + 1 < surah.ayahs.length) {
+        playAtRef.current(surah.number, index + 1)
+      } else if (continuousPlay && surah.number < 114) {
+        playAtRef.current(surah.number + 1, 0)
+      } else {
+        setIsPlaying(false)
+      }
+    }
     audioRef.current = audio
     return () => audio.pause()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function playAt(surahNumber, idx) {
@@ -104,6 +134,7 @@ export function PlayerProvider({ children }) {
       setIsLoading(false)
     }
   }
+  playAtRef.current = playAt
 
   function togglePlayPause() {
     const audio = audioRef.current
@@ -169,22 +200,6 @@ export function PlayerProvider({ children }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings.reciter, settings.translation])
-
-  // Rebind the "ended" handler so it always sees the latest surah/index/continuousPlay/loopAyah
-  useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
-    audio.onended = () => {
-      if (loopAyah) {
-        endTriggeredRef.current = false
-        seekTo(audio, ayahBoundsRef.current.startMs)
-        audio.play()
-      } else {
-        goToNext()
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [surah, index, settings.continuousPlay, loopAyah])
 
   const currentAyah = surah ? surah.ayahs[index] : null
 

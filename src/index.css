@@ -819,11 +819,17 @@ button {
   order: 1;
 }
 
-.quran-row__controls {
+.quran-row__topline {
   display: flex;
   align-items: center;
   gap: 6px;
   margin-bottom: 8px;
+}
+
+.quran-row__controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .ayah-badge {
@@ -883,16 +889,21 @@ button {
     gap: 12px;
   }
 
-  /* Dissolves the desktop two-column wrapper so its children (controls,
-     translation) become independently orderable alongside the Arabic
-     verse, instead of being stuck together as one block. */
+  /* Dissolves both desktop wrapper levels (the meaning column, and the
+     badge+controls topline within it) so the ayah badge, action buttons,
+     and translation can each be ordered independently alongside the
+     Arabic verse, instead of being stuck together as fixed blocks. */
   .quran-row__meaning {
     display: contents;
   }
 
-  .quran-row__controls {
+  .quran-row__topline {
+    display: contents;
+  }
+
+  .ayah-badge {
     order: 1;
-    margin-bottom: 0;
+    align-self: flex-start;
   }
 
   .quran-row__arabic {
@@ -901,6 +912,12 @@ button {
 
   .quran-row__translation {
     order: 3;
+  }
+
+  .quran-row__controls {
+    order: 4;
+    justify-content: center;
+    margin-top: 2px;
   }
 }
 
