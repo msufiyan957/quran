@@ -131,9 +131,12 @@ button {
   display: flex;
   align-items: baseline;
   text-decoration: none;
+  font-family: 'Noto Sans', 'Inter', system-ui, -apple-system, sans-serif;
   font-weight: 800;
-  font-size: 1.3rem;
+  font-style: italic;
+  font-size: 1.4rem;
   letter-spacing: -0.01em;
+  text-transform: uppercase;
   color: var(--accent);
 }
 
