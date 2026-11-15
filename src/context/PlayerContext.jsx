@@ -38,6 +38,19 @@ export function PlayerProvider({ children }) {
   useEffect(() => {
     const audio = new Audio()
     audio.preload = 'auto'
+    // Keeps audio classified as active media playback by the OS/browser, so
+    // it survives screen lock and backgrounding instead of being suspended —
+    // mirrors how Spotify/Apple Music show lock-screen transport controls.
+    // Also the single source of truth for isPlaying, since lock-screen/
+    // Bluetooth controls can start or stop playback outside of our own UI.
+    audio.addEventListener('play', () => {
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'playing'
+      setIsPlaying(true)
+    })
+    audio.addEventListener('pause', () => {
+      if ('mediaSession' in navigator) navigator.mediaSession.playbackState = 'paused'
+      setIsPlaying(false)
+    })
     audio.ontimeupdate = () => {
       const t = audio.currentTime * 1000
       const segments = segmentsRef.current
@@ -174,6 +187,40 @@ export function PlayerProvider({ children }) {
   }, [surah, index, settings.continuousPlay, loopAyah])
 
   const currentAyah = surah ? surah.ayahs[index] : null
+
+  // Lock-screen / notification-shade metadata, like a Spotify "now playing" card.
+  useEffect(() => {
+    if (!('mediaSession' in navigator) || !surah || !currentAyah) return
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: `${surah.englishName} — Ayah ${currentAyah.numberInSurah}`,
+      artist: surah.englishNameTranslation || 'The Holy Quran',
+      album: 'Assalamualaikum.org',
+      artwork: [
+        { src: '/icons/favicon-192.png', sizes: '192x192', type: 'image/png' },
+        { src: '/icons/favicon-512.png', sizes: '512x512', type: 'image/png' },
+      ],
+    })
+  }, [surah, currentAyah])
+
+  // Lets the lock screen / Bluetooth / headset controls drive playback
+  // directly, the same way Spotify and Apple Music respond to those buttons.
+  useEffect(() => {
+    if (!('mediaSession' in navigator)) return
+    const audio = audioRef.current
+    navigator.mediaSession.setActionHandler('play', () => audio?.play())
+    navigator.mediaSession.setActionHandler('pause', () => audio?.pause())
+    navigator.mediaSession.setActionHandler('stop', () => audio?.pause())
+    navigator.mediaSession.setActionHandler('previoustrack', () => goToPrev())
+    navigator.mediaSession.setActionHandler('nexttrack', () => goToNext())
+    return () => {
+      navigator.mediaSession.setActionHandler('play', null)
+      navigator.mediaSession.setActionHandler('pause', null)
+      navigator.mediaSession.setActionHandler('stop', null)
+      navigator.mediaSession.setActionHandler('previoustrack', null)
+      navigator.mediaSession.setActionHandler('nexttrack', null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [surah, index, settings.continuousPlay])
 
   return (
     <PlayerContext.Provider
