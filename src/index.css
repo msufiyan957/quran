@@ -142,6 +142,12 @@ button {
   color: var(--accent);
 }
 
+@media (max-width: 640px) {
+  .brand {
+    font-size: 1.05rem;
+  }
+}
+
 .brand__ext {
   font-size: 0.55em;
   font-weight: 600;
@@ -803,6 +809,10 @@ button {
 
 .quran-row.is-active {
   background: rgba(var(--accent-rgb), 0.07);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 20px 16px;
+  margin: 6px -16px;
 }
 
 .quran-row__meaning {
@@ -867,16 +877,30 @@ button {
 
 @media (max-width: 760px) {
   .quran-row {
-    grid-template-columns: 1fr;
-    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  /* Dissolves the desktop two-column wrapper so its children (controls,
+     translation) become independently orderable alongside the Arabic
+     verse, instead of being stuck together as one block. */
+  .quran-row__meaning {
+    display: contents;
+  }
+
+  .quran-row__controls {
+    order: 1;
+    margin-bottom: 0;
   }
 
   .quran-row__arabic {
-    order: 1;
+    order: 2;
   }
 
-  .quran-row__meaning {
-    order: 2;
+  .quran-row__translation {
+    order: 3;
   }
 }
 
