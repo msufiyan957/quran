@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useLocation, Link } from 'react-router-dom'
 import { getSurah } from '../api/quran.js'
 import { getChapterWords } from '../api/quranWbw.js'
@@ -53,6 +53,35 @@ export default function SurahPage() {
       if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior: 'smooth', block: 'center' }))
     }
   }, [surah, location.hash])
+
+  // Hoisted out of the ayahs.map() below and kept referentially stable (via
+  // useCallback) so AyahCard's React.memo actually bails out on unrelated
+  // re-renders — e.g. the per-tick activeWordPosition updates during playback.
+  // Without this, a new closure per ayah per render would force every
+  // AyahCard in the surah to re-render several times a second.
+  const handleToggleLoop = useCallback(
+    (ayah, isActive) => {
+      if (isActive) {
+        player.setLoopAyah(!player.loopAyah)
+      } else {
+        player.play(surahNumber, ayah.numberInSurah - 1)
+        player.setLoopAyah(true)
+      }
+    },
+    [player.setLoopAyah, player.loopAyah, player.play, surahNumber]
+  )
+
+  const handleBookmark = useCallback(
+    (ayah) => {
+      toggleBookmark({
+        surahNumber,
+        surahName: surah?.englishName,
+        numberInSurah: ayah.numberInSurah,
+        text: ayah.translation,
+      })
+    },
+    [toggleBookmark, surahNumber, surah?.englishName]
+  )
 
   const isCurrentSurah = player.surah?.number === surahNumber
 
@@ -152,22 +181,8 @@ export default function SurahPage() {
               looping={isActive && player.loopAyah}
               onPlay={player.play}
               onToggle={player.toggle}
-              onToggleLoop={() => {
-                if (isActive) {
-                  player.setLoopAyah(!player.loopAyah)
-                } else {
-                  player.play(surahNumber, ayah.numberInSurah - 1)
-                  player.setLoopAyah(true)
-                }
-              }}
-              onBookmark={(a) =>
-                toggleBookmark({
-                  surahNumber,
-                  surahName: surah.englishName,
-                  numberInSurah: a.numberInSurah,
-                  text: a.translation,
-                })
-              }
+              onToggleLoop={handleToggleLoop}
+              onBookmark={handleBookmark}
             />
           )
         })}

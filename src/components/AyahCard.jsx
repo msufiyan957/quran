@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, memo } from 'react'
 import { PlayIcon, PauseIcon, BookmarkIcon, LoopIcon } from './Icons.jsx'
 
 const AyahCard = forwardRef(function AyahCard(
@@ -59,7 +59,7 @@ const AyahCard = forwardRef(function AyahCard(
             <button
               type="button"
               className={`icon-btn${looping ? ' icon-btn--active' : ''}`}
-              onClick={onToggleLoop}
+              onClick={() => onToggleLoop(ayah, isActive)}
               aria-pressed={looping}
               aria-label={looping ? 'Stop repeating this ayah' : `Repeat ayah ${ayah.numberInSurah} to memorize`}
               title="Repeat this ayah"
@@ -92,4 +92,4 @@ const AyahCard = forwardRef(function AyahCard(
   )
 })
 
-export default AyahCard
+export default memo(AyahCard)

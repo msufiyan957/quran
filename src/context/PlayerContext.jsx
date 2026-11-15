@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { getSurah } from '../api/quran.js'
 import { getAyahAudio } from '../api/quranWbw.js'
 import { useSettings } from './SettingsContext.jsx'
@@ -98,7 +98,10 @@ export function PlayerProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  async function playAt(surahNumber, idx) {
+  // Stable across ayah-internal ticks (timeupdate only touches activeWordPosition,
+  // not surah/index/settings), so components that receive `play` as a prop don't
+  // re-render on every tick — critical for AyahCard, which React.memo relies on.
+  const playAt = useCallback(async function playAt(surahNumber, idx) {
     setError(null)
     setLoopAyah(false)
     setIsLoading(true)
@@ -133,10 +136,11 @@ export function PlayerProvider({ children }) {
     } finally {
       setIsLoading(false)
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [surah, settings.reciter, settings.translation, recordLastRead])
   playAtRef.current = playAt
 
-  function togglePlayPause() {
+  const togglePlayPause = useCallback(() => {
     const audio = audioRef.current
     if (!audio || !surah) return
     if (isPlaying) {
@@ -146,9 +150,9 @@ export function PlayerProvider({ children }) {
       audio.play()
       setIsPlaying(true)
     }
-  }
+  }, [surah, isPlaying])
 
-  function goToNext() {
+  const goToNext = useCallback(() => {
     if (!surah) return
     if (index + 1 < surah.ayahs.length) {
       playAt(surah.number, index + 1)
@@ -157,16 +161,16 @@ export function PlayerProvider({ children }) {
     } else {
       setIsPlaying(false)
     }
-  }
+  }, [surah, index, settings.continuousPlay, playAt])
 
-  function goToPrev() {
+  const goToPrev = useCallback(() => {
     if (!surah) return
     if (index > 0) {
       playAt(surah.number, index - 1)
     } else if (surah.number > 1) {
       playAt(surah.number - 1, 0)
     }
-  }
+  }, [surah, index, playAt])
 
   // Keep the audio in sync when the user changes reciter or translation mid-playback
   useEffect(() => {
@@ -237,27 +241,26 @@ export function PlayerProvider({ children }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [surah, index, settings.continuousPlay])
 
-  return (
-    <PlayerContext.Provider
-      value={{
-        surah,
-        index,
-        currentAyah,
-        isPlaying,
-        isLoading,
-        error,
-        activeWordPosition,
-        loopAyah,
-        setLoopAyah,
-        play: playAt,
-        toggle: togglePlayPause,
-        next: goToNext,
-        prev: goToPrev,
-      }}
-    >
-      {children}
-    </PlayerContext.Provider>
+  const value = useMemo(
+    () => ({
+      surah,
+      index,
+      currentAyah,
+      isPlaying,
+      isLoading,
+      error,
+      activeWordPosition,
+      loopAyah,
+      setLoopAyah,
+      play: playAt,
+      toggle: togglePlayPause,
+      next: goToNext,
+      prev: goToPrev,
+    }),
+    [surah, index, currentAyah, isPlaying, isLoading, error, activeWordPosition, loopAyah, playAt, togglePlayPause, goToNext, goToPrev]
   )
+
+  return <PlayerContext.Provider value={value}>{children}</PlayerContext.Provider>
 }
 
 export function usePlayer() {
