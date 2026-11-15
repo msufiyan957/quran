@@ -34,8 +34,10 @@ export default function App() {
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </main>
-      <MiniPlayer />
-      <BottomNav />
+      <div className="bottom-stack">
+        <MiniPlayer />
+        <BottomNav />
+      </div>
     </>
   )
 }

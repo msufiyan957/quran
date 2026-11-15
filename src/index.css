@@ -142,14 +142,19 @@ button {
   color: var(--text-dim);
 }
 
-/* ---------- Bottom nav (icon + label, big tap targets) ---------- */
+/* ---------- Bottom stack (mini player + bottom nav, flush together) ---------- */
 
-.bottom-nav {
+.bottom-stack {
   position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 20;
+  display: flex;
+  flex-direction: column;
+}
+
+.bottom-nav {
   display: flex;
   background: var(--bg-elevated);
   border-top: 1px solid var(--border);
@@ -183,11 +188,6 @@ button {
 /* ---------- Mini player ---------- */
 
 .mini-player {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 64px;
-  z-index: 19;
   background: var(--bg-card);
   border-top: 1px solid var(--border);
   padding: 10px 16px;
