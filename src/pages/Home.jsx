@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { getSurahList } from '../api/quran.js'
 import { useBookmarks } from '../context/BookmarksContext.jsx'
 import SurahCard from '../components/SurahCard.jsx'
+import DeccanbridgeLogo from '../components/DeccanbridgeLogo.jsx'
 import { SearchIcon, BookIcon, ChevronRightIcon } from '../components/Icons.jsx'
 import { getHadithOfTheDay } from '../data/hadiths.js'
 
@@ -113,6 +114,7 @@ export default function Home() {
         <p className="dedication">
           Built with the hope that it serves you well — and that it counts for good, in sha Allah.
         </p>
+        <DeccanbridgeLogo className="dedication__logo" />
       </div>
     </div>
   )

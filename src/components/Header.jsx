@@ -5,7 +5,7 @@ export default function Header() {
     <header className="app-header">
       <div className="app-header__inner">
         <Link to="/" className="brand">
-          Assalamualaikum!
+          <span className="brand__name">Assalamualaikum.org</span>
         </Link>
       </div>
     </header>
